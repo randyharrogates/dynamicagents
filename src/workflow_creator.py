@@ -32,6 +32,20 @@ class WorkflowBuilder:
 
 
 def create_dynamic_workflow(create_request: CreateWorkflowRequest):
+    """
+    Create a dynamic workflow based on the provided request.
+
+    This function takes a CreateWorkflowRequest and constructs a dynamic workflow
+    by instantiating agents based on the agent data and setting up the workflow
+    graph based on the provided logic.
+
+    Parameters:
+        create_request: CreateWorkflowRequest - A Pydantic model containing the
+            workflow graph and agent data.
+
+    Returns:
+        A tuple containing the state graph and the WorkflowBuilder object.
+    """
     state_graph = _create_dynamic_graph_state(create_request.state_info)
     builder = WorkflowBuilder(state_graph)
 
@@ -71,7 +85,17 @@ def create_dynamic_workflow(create_request: CreateWorkflowRequest):
 
 def _create_dynamic_graph_state(state_info: Dict[str, Any]) -> GraphState:
     """
-    Creates a GraphState dynamically based on the provided state_info.
+    Create a dynamic GraphState based on the provided state information.
+
+    This function takes a dictionary of key-value pairs and creates a dynamic GraphState
+    object. The function is used by the create_dynamic_workflow function to create a
+    GraphState object that is passed to the WorkflowBuilder.
+
+    Parameters:
+        state_info: Dict[str, Any] - A dictionary containing the state information
+
+    Returns:
+        GraphState - A dynamic GraphState object with the provided state information.
     """
     graph_state = GraphState()
     # You can also add additional dynamic fields that are passed in the request
