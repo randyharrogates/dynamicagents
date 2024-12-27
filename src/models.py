@@ -35,30 +35,19 @@ class CreateAgentRequest(BaseModel):
 # ==== Seconed endpoint ====
 
 
-class WorkflowInput(BaseModel):
-    start_time: Optional[str] = "No start time yet"
-    end_time: Optional[str] = "No end time yet"
-    indoor_outdoor: Optional[str] = "No indoor/outdoor preference yet"
-    country: Optional[str] = "No country preference yet"
-    budget: Optional[str] = "No budget yet"
-    food_preference: Optional[str] = "No food preference yet"
-    activity_preference: Optional[str] = "No activity preference yet"
-    other_requirements: Optional[str] = "No other requirements yet"
+class GraphInitialState(BaseModel):
+    # Allow any key-value pairs dynamically
+    data: Dict[str, Any]
+
+    class Config:
+        extra = "allow"  # This ensures extra keys are allowed in the model
 
 
 class WorkflowGraph(BaseModel):
     graph_logic: Dict[str, Any]
 
 
-class AgentData(BaseModel):
-    name: str
-    description: str
-    functions: List[Dict[str, Any]]
-    tools: List[Dict[str, Any]]
-    memory: List[Dict[str, Any]]
-
-
 class CreateWorkflowRequest(BaseModel):
-    agent_data: List[AgentData]
+    agent_data: List[Agent]
     workflow_graph: WorkflowGraph
-    state_info: WorkflowInput
+    state_info: GraphInitialState
