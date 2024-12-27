@@ -1,0 +1,57 @@
+# Python
+*.pyc
+*.pyo
+__pycache__/
+*.pyd
+*.pdb
+*.log
+
+# Virtual Environment
+venv/
+env/
+.venv/
+*.env
+
+# FastAPI
+*.sqlite
+db.sqlite3
+*.db
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Pytest
+.cache/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# coverage
+.coverage
+.coverage.*
+nosetests.xml
+test_*.xml
+*.cover
+
+# package distribution
+build/
+dist/
+*.egg-info/
+
+# dotenv files
+.env
+.env.*
+
+# Docker
+Dockerfile
+docker-compose.yml
