@@ -20,6 +20,7 @@ orjson==3.10.12
 packaging==24.2
 pydantic==2.10.4
 pydantic_core==2.27.2
+python-dotenv==1.0.1
 PyYAML==6.0.2
 requests==2.32.3
 requests-toolbelt==1.0.0

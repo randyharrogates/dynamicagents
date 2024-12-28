@@ -7,17 +7,14 @@ from typing import List, Optional, Any, Dict, Union, Callable
 class AgentFunction(BaseModel):
     name: str
     description: str
-    code: str
 
 class AgentTool(BaseModel):
     name: str
     description: str
-    code: str
 
 class AgentMemory(BaseModel):
     type: str
     description: str
-    code: str
 
 
 class Agent(BaseModel):
@@ -26,32 +23,7 @@ class Agent(BaseModel):
     functions: List[AgentFunction]
     tools: List[AgentTool]
     memory: List[AgentMemory]
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.run = self.create_run_function()
-
-    def create_run_function(self) -> Callable:
-        """
-        Dynamically create a run function for the agent based on the 'run' function in its functions list.
-        """
-        # Look for the function named "run" in the functions list and return it
-        run_function = next(
-            (func for func in self.functions if func.name == "run"), None
-        )
-
-        if not run_function:
-            raise ValueError(f"Run function not defined for agent: {self.name}")
-
-        # Create a callable from the code string of the function
-        def dynamic_run():
-            logger.info(f"Running agent: {self.name}")
-            logger.info(f"Executing run function: {run_function.name}")
-            logger.info(f"Description: {run_function.description}")
-            # Dynamically execute the code for the 'run' function
-            exec(run_function.code)  # This executes the code in the 'run' function
-
-        return dynamic_run
+    model_name = str
 
 
 class CreateAgentRequest(BaseModel):

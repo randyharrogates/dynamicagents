@@ -60,7 +60,7 @@ def create_dynamic_workflow(create_request: CreateWorkflowRequest):
             memory=agent.memory,
         )
         builder.add_node(
-            agent.name, dynamic_agent.run
+            agent.name, dynamic_agent.run_function
         )  # Add agent's run method to the workflow
 
     # Step 2: Set entry point and add edges based on workflow graph logic
