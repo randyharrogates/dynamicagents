@@ -1,3 +1,8 @@
+"""
+Module is used as a function registry to initialize the available functions 
+for the agent to execute. In a sense, this is also an agent class.
+"""
+
 from llm import LLM
 from typing import List
 from models import AgentMemory, AgentTool, GraphState, Callable
