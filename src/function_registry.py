@@ -4,29 +4,23 @@ for the agent to execute. In a sense, this is also an agent class.
 """
 
 from llm import LLM
-from typing import List
-from models import AgentMemory, AgentTool, GraphState, Callable
+from typing import List, Dict
+from models import GraphState, Callable, Agent
 
 
 class FunctionRegistry:
     """
     A registry that holds available functions for agents to execute.
+    Used to create a single agent
     """
 
-    def __init__(
-        self, memories: List[AgentMemory], tools: List[AgentTool], state: GraphState
-    ):
-        self.state = state
-        self.memory = memories
-        self.tools = tools
-        self.llm_caller = LLM()
-        self.functions = {
-            "_parse_query": self._parse_query,
-            "_summarize_query": self._summarize_query,
-            "_augment_query": self._augment_query,
-            "_generate_final_query": self._generate_final_query,
-        }
-        self._get_current_state(self.state)
+    def __init__(self, agent_data: Agent):
+        self.state_variables = agent_data.state_variables
+        self.llm_caller = LLM(agent_data.model_name)
+        self.initial_query = agent_data.initial_query
+        self.parse_query_output = ""
+        self.functions = {"_parse_query": self.initial_query}
+        self._get_initial_state()
 
     def register(self, function_name: str, function: Callable):
         """
@@ -42,51 +36,54 @@ class FunctionRegistry:
             raise ValueError(f"Function '{function_name}' is not registered.")
         return self.functions[function_name]
 
-    def _get_current_state(self, state: GraphState):
+    def _get_initial_state(self):
         """
         Dynamically creates instance variables based on the keys in the state.data dictionary.
         """
         # Iterate through the state data and create dynamic variables
-        for key, value in state.data.items():
+        for key, _ in self.state_variables:
             # Dynamically create instance variables on 'self'
-            setattr(self, key, value)
+            setattr(self, key, getattr(self, key))
 
-    def _parse_query(self, query: str, kwargs) -> str:
-        """Create first query"""
-        agent_feedback = self.llm_caller.get_llm_response(query.format(**kwargs))
-        return agent_feedback
-
-    def _summarize_query(self, query: str, kwargs) -> str:
-        """Summarize the user's query using the chosen LLM."""
-        summary_feedback = self._parse_query(query, kwargs)
-        return summary_feedback
-
-    def _augment_query(self, query: str, documents: list[str]) -> str:
-        """Combine the query with retrieved documents."""
-        context = "\n".join(documents)
-        return f"Query: {query}\nContext:\n{context}\nAnswer:"
-
-    def _generate_final_query(self, original_query: str, augmented_query: str) -> str:
-        """Generate a response using the chosen LLM."""
-        final_query = "\n".join([original_query, augmented_query])
-        return final_query
-
-    def run(self, function_names: List[str], agent: "Agent") -> dict:
+    def _get_current_state(self) -> Dict[str, Any]:
         """
-        Run a list of functions based on the function names provided.
+        Retrieve the current state of the agent before any actions are performed.
+        This method collects all dynamically created instance variables as part of the state.
+        """
+        current_state = {
+            key: getattr(self, key, None) for key in self.state_variables.keys()
+        }
+        return current_state
+
+    def _update_agent_state(self, state_updates: Dict[str, Any]) -> None:
+        """
+        Update the agent's state after performing an operation.
+        This method updates the instance variables (self.<key>) based on the provided state_updates.
+        """
+        for key, value in state_updates.items():
+            setattr(self, key, value)  # Update the state dynamically on 'self'
+
+        # Log the updated state for debugging purposes
+        logger.info(f"Updated agent state: {state_updates}")
+
+    def _parse_query(self, query: str) -> str:
+        """Create first query"""
+        self.parse_query_output = self.llm_caller.get_llm_response(query)
+
+    def run(self) -> Dict:
+        """
+        Run a dict of functions based on the function names provided.
         Each function in the list will be executed in order.
         """
-        result = self._parse_query(self._get_current_state.initial_output, self.state)
-        results = {}
-        for function_name in function_names:
+        for function_name, params in self.functions.items():
+            # Retrieve the function from the registry
             function = self.get_function(function_name)
-            results[function_name] = function(agent, state)
-        return results
+            logger.info(f"Running function: {function_name}")
+            # Execute the function
+            function(params)  # Just call the function without capturing the result
 
+        # After executing the function, update the state based on the current function's output
+        updated_state = self._get_current_state()
+        self._update_agent_state(updated_state)
 
-# # Example functions that can be dynamically assigned to agents
-# def run_example_function(input_data: str) -> str:
-#     """
-#     A simple function that simulates an agent's 'run' function.
-#     """
-#     return f"Processed input: {input_data}"
+        return self._get_current_state()

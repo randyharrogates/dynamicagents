@@ -8,22 +8,25 @@ class AgentFunction(BaseModel):
     name: str
     description: str
 
-class AgentTool(BaseModel):
-    name: str
-    description: str
 
-class AgentMemory(BaseModel):
-    type: str
-    description: str
+class StateVariable(BaseModel):
+    key: str
+    value: str
 
 
 class Agent(BaseModel):
     name: str
     description: str
     functions: List[AgentFunction]
-    tools: List[AgentTool]
-    memory: List[AgentMemory]
+    state_variables: List[Dict[str, str]] = Field(
+        ...,
+        description=(
+            "A list of dicts where the keys are state variable names "
+            "and the values are the initial state variable values."
+        ),
+    )
     model_name = str
+    initial_query = Optional[str]
 
 
 class CreateAgentRequest(BaseModel):
