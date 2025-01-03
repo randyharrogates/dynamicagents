@@ -35,3 +35,9 @@ cd src
 ```bash
 uvicorn main:app --reload
 ```
+
+## Sample Multi-Agent workflow for "middle portion" (backend)
+![](image.png)
+
+## Overall workflow
+![alt text](image-1.png)
