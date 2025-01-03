@@ -8,9 +8,8 @@ __pycache__/
 
 # Virtual Environment
 venv/
-env/
 .venv/
-*.env
+.env
 
 # FastAPI
 *.sqlite
@@ -47,11 +46,3 @@ test_*.xml
 build/
 dist/
 *.egg-info/
-
-# dotenv files
-.env
-.env.*
-
-# Docker
-Dockerfile
-docker-compose.yml

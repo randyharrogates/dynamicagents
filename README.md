@@ -1,43 +1,37 @@
-# dynamicagents
-A microservice to create agents and langgraph workflows
+# Dynamic Agents
+A microservice to create agents and LangGraph workflows
 
-* Note: This service does not provide the LLM logic. This service will only create Agents with a set of logic provided to the service
+* Note: This service does not provide the LLM logic. This service will only create agents with a set of logic provided to the service
 
-## To run API
+## Project Requirement
+- Python 3.12
 
-1. Create virtual environment
+## System Overview
+Refer to the following overview of this project and the visualized end goal.
+![System Overview](assets/system-overview.png)
 
+### Internal process within Backend Multi-Agent RAG App
+Refer to the following to visualize the flow within Backend Multi-Agent RAG App
+![Agent Architecture](assets/agent-architecture.png)
+
+## Basic Setup
 ```bash
-python3 -m venv venv
-```
-2. Activate virtual environment
+# Create environment
+python -m venv .venv
 
-For windows:
+# Activate environment
+source ./venv/bin/activate
+# For windows
+# .\venv\Scripts\activate
 
-```bash
-.\venv\Scripts\activate
-```
+# .env setup
+cp .env.sample .env
 
-For Mac/Linux:
+# Configure the values within .env
 
-```bash
-source venv/bin/activate
-```
+# Install dependencies
+pip install -r requirements.txt
 
-3. Go into source directory:
-
-```bash
-cd src
-```
-
-4. Run the following command:
-
-```bash
+# Run the app
 uvicorn main:app --reload
 ```
-
-## Sample Multi-Agent workflow for "middle portion" (backend)
-![alt text](image-1.png)
-
-## Overall workflow
-![alt text](image.png)
